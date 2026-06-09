@@ -10,9 +10,9 @@
       --bg:#0f6a7a; --bg2:#0a5561; --text:#f5f8fb;
       --tile-blue:#2d89ef; --tile-green:#00a300; --tile-purple:#7e3878; --tile-orange:#da532c; --tile-pink:#e671b8; --tile-cyan:#00aba9; --tile-yellow:#ffc40d;
       --shadow:0 14px 30px rgba(0,0,0,.25);
-      /* Reduced tile sizes and gaps */
-      --gap:10px; 
-      --unit: clamp(90px, 10vw, 140px);
+      /* Slightly increased tile sizes and gaps to match the screenshot scale */
+      --gap: 14px; 
+      --unit: clamp(100px, 11vw, 155px);
     }
 
     *{box-sizing:border-box}
@@ -22,16 +22,15 @@
     .stage{ position:relative; z-index:2; }
     .block{ width: fit-content; margin: 0 auto; padding-bottom: 48px; }
 
-    /* Reduced spacing around the header to save space */
-    header{ display:flex; align-items:center; justify-content:flex-start; gap:16px; user-select:none; padding-top: calc(env(safe-area-inset-top, 0px) + clamp(16px, 4vh, 60px)); margin:0 0 clamp(24px, 3vh, 48px); }
-    /* Reduced logo size */
-    .brand img{ height: clamp(45px, 8vw, 100px); width:auto; display:block }
+    header{ display:flex; align-items:center; justify-content:flex-start; gap:16px; user-select:none; padding-top: calc(env(safe-area-inset-top, 0px) + clamp(20px, 4vh, 80px)); margin:0 0 clamp(32px, 4vh, 64px); }
+    /* Slightly increased logo size */
+    .brand img{ height: clamp(55px, 8vw, 110px); width:auto; display:block }
 
     /* Split Dashboard Layout */
     .dashboard {
       display: flex;
       flex-wrap: wrap;
-      gap: clamp(24px, 3vw, 48px); /* Reduced gap between left and right sections */
+      gap: clamp(32px, 4vw, 64px);
       justify-content: center;
       align-items: flex-start;
       margin: 0 auto 24px;
@@ -87,7 +86,7 @@
     .size-4x2{ grid-column: span 4; grid-row: span 2; }
     .size-4x1{ grid-column: span 4; grid-row: span 1; }
 
-    .label{ position:absolute; left:12px; bottom:10px; font-weight:400; opacity:.95; font-size: clamp(0.75rem, 1.2vw, 0.9rem); margin:0; }
+    .label{ position:absolute; left:12px; bottom:10px; font-weight:400; opacity:.95; font-size: clamp(0.8rem, 1.2vw, 0.95rem); margin:0; }
     .icon{ font-size:34px; line-height:1 }
 
     /* === COLOUR TINTS === */
@@ -97,16 +96,16 @@
       border-color: color-mix(in srgb, var(--tile-purple) 40%, transparent);
     }
     .time:hover{ background: color-mix(in srgb, var(--tile-purple) 34%, rgba(255,255,255,.10)); border-color: color-mix(in srgb, var(--tile-purple) 52%, transparent); }
-    /* Added responsive sizing for text inside tiles */
-    .time .clock{ font-size: clamp(32px, 4.5vw, 50px); font-weight:800; letter-spacing:.5px; }
-    .time .date{ font-size: clamp(12px, 1.5vw, 15px); opacity:.9; margin-top: 4px; }
+    /* Adjusted responsive sizing for text inside tiles to match new scale */
+    .time .clock{ font-size: clamp(34px, 5vw, 56px); font-weight:800; letter-spacing:.5px; }
+    .time .date{ font-size: clamp(13px, 1.5vw, 16px); opacity:.9; margin-top: 4px; }
 
     .weather{ background: color-mix(in srgb, var(--tile-blue) 18%, rgba(255,255,255,.08)); border-color: color-mix(in srgb, var(--tile-blue) 40%, transparent); }
     .weather:hover{ background: color-mix(in srgb, var(--tile-blue) 24%, rgba(255,255,255,.10)); border-color: color-mix(in srgb, var(--tile-blue) 52%, transparent); }
-    .weather .temp{ font-size: clamp(32px, 4.5vw, 50px); font-weight:800 }
-    .weather .cond{ font-size: clamp(12px, 1.5vw, 15px); opacity:.9 }
+    .weather .temp{ font-size: clamp(34px, 5vw, 56px); font-weight:800 }
+    .weather .cond{ font-size: clamp(13px, 1.5vw, 16px); opacity:.9 }
     .weather .wrow{ display:flex; align-items:center; gap:12px; }
-    .weather .wicon{ width: clamp(36px, 8vw, 86px); height:auto; flex:0 0 auto; filter: drop-shadow(0 2px 6px rgba(0,0,0,.25)); }
+    .weather .wicon{ width: clamp(40px, 8vw, 90px); height:auto; flex:0 0 auto; filter: drop-shadow(0 2px 6px rgba(0,0,0,.25)); }
 
     .mail{ background: color-mix(in srgb, var(--tile-orange) 40%, rgba(255,255,255,.08)); border-color: color-mix(in srgb, var(--tile-orange) 45%, transparent); }
     .mail:hover{ background: color-mix(in srgb, var(--tile-orange) 44%, rgba(255,255,255,.10)); border-color: color-mix(in srgb, var(--tile-orange) 64%, transparent); }
@@ -279,12 +278,6 @@
           <a class="tile yellow size-2x1" href="#" aria-label="Yellow Badge">
             <div class="imgbox"><img class="tileimg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='18' x='3' y='3' rx='2'/%3E%3Ccircle cx='12' cy='10' r='3'/%3E%3Cpath d='M7 21v-2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2'/%3E%3C/svg%3E" alt="Yellow Badge" loading="lazy" /></div>
             <div class="label">Yellow Badge</div>
-          </a>
-
-          <!-- Your Wellbeing -->
-          <a class="tile people size-2x1" href="#" aria-label="Your Wellbeing">
-            <div class="imgbox"><img class="tileimg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7.9 20A9 9 0 1 0 4 16.1L2 22Z'/%3E%3C/svg%3E" alt="Your Wellbeing" loading="lazy" /></div>
-            <div class="label">Your Wellbeing</div>
           </a>
 
           <!-- Printing Paper -->
