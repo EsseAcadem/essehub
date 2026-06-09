@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Essentia Academy 🄷🅄🄱</title>
+  <title>Essentia 🄷🅄🄱</title>
   <meta name="theme-color" content="#0f6a7a" />
   <style>
     :root{
@@ -19,10 +19,31 @@
     html,body{ margin:0; color:var(--text); font-family: Calibri, "Segoe UI", -apple-system, system-ui, Roboto, Arial, sans-serif; -webkit-tap-highlight-color: transparent; background: #004050; overflow-x:hidden; }
     body::after{ display:none; }
 
-    .stage{ position:relative; z-index:2; }
-    .block{ width: fit-content; margin: 0 auto; padding-bottom: 48px; }
+    /* Set the stage to fill the screen and center its contents */
+    .stage { 
+      position: relative; 
+      z-index: 2; 
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: clamp(24px, 4vh, 60px) 24px;
+    }
+    
+    /* Using margin: auto perfectly centers the block both vertically and horizontally */
+    .block { 
+      width: fit-content; 
+      margin: auto; 
+    }
 
-    header{ display:flex; align-items:center; justify-content:flex-start; gap:16px; user-select:none; padding-top: calc(env(safe-area-inset-top, 0px) + clamp(20px, 4vh, 80px)); margin:0 0 clamp(32px, 4vh, 64px); }
+    header { 
+      display: flex; 
+      align-items: center; 
+      justify-content: flex-start; 
+      gap: 16px; 
+      user-select: none; 
+      margin: 0 0 clamp(24px, 4vh, 48px); 
+    }
+    
     /* Slightly increased logo size */
     .brand img{ height: clamp(55px, 8vw, 110px); width:auto; display:block }
 
@@ -33,7 +54,7 @@
       gap: clamp(32px, 4vw, 64px);
       justify-content: center;
       align-items: flex-start;
-      margin: 0 auto 24px;
+      margin: 0 auto;
       width: fit-content;
     }
 
