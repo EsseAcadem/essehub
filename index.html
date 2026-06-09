@@ -10,7 +10,10 @@
       --bg:#0f6a7a; --bg2:#0a5561; --text:#f5f8fb;
       --tile-blue:#2d89ef; --tile-green:#00a300; --tile-purple:#7e3878; --tile-orange:#da532c; --tile-pink:#e671b8; --tile-cyan:#00aba9; --tile-yellow:#ffc40d;
       --shadow:0 14px 30px rgba(0,0,0,.25);
-      --gap:12px; --unit: clamp(110px, 12vw, 170px);
+      
+      /* Reduced sizes to make tiles and layout smaller overall */
+      --gap:12px; 
+      --unit: clamp(85px, 9.5vw, 135px); 
     }
 
     *{box-sizing:border-box}
@@ -21,7 +24,9 @@
     .block{ width: fit-content; margin: 0 auto; padding-bottom: 48px; }
 
     header{ display:flex; align-items:center; justify-content:flex-start; gap:16px; user-select:none; padding-top: calc(env(safe-area-inset-top, 0px) + clamp(24px, 6vh, 100px)); margin:0 0 clamp(40px, 5vh, 88px); }
-    .brand img{ height: clamp(70px, 12vw, 160px); width:auto; display:block }
+    
+    /* Reduced logo size */
+    .brand img{ height: clamp(50px, 8vw, 100px); width:auto; display:block }
 
     /* Split Dashboard Layout */
     .dashboard {
@@ -62,10 +67,10 @@
 
     .tile{
       border-radius:18px; padding:10px; display:flex; flex-direction:column; gap:6px;
-      color:#fff; text-decoration:none; position:relative; overflow:hidden; outline:none;
+      color:#fff; text-decoration:none; position:relative; outline:none;
       transition: transform .1s ease, box-shadow .2s ease, background .2s ease;
       
-      /* Frosty glass base - Blur reduced from 14px to 8px to save huge amounts of GPU memory */
+      /* Frosty glass base */
       background: rgba(255,255,255,.08);
       -webkit-backdrop-filter: blur(8px) saturate(120%);
       backdrop-filter: blur(8px) saturate(120%);
@@ -74,6 +79,10 @@
       border: 1px solid rgba(255,255,255,.35);
       box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.28);
     }
+    
+    /* Ensure overflow is hidden per tile to contain icons nicely */
+    .tile { overflow: hidden; }
+    
     .tile:focus-visible{ outline:3px solid rgba(255,255,255,.6) }
     .tile:active{ transform: scale(.98) }
 
@@ -83,7 +92,7 @@
     .size-4x2{ grid-column: span 4; grid-row: span 2; }
     .size-4x1{ grid-column: span 4; grid-row: span 1; }
 
-    .label{ position:absolute; left:12px; bottom:10px; font-weight:400; opacity:.95; font-size:.9rem; margin:0; }
+    .label{ position:absolute; left:12px; bottom:10px; font-weight:400; opacity:.95; font-size:.85rem; margin:0; }
     .icon{ font-size:34px; line-height:1 }
 
     /* === COLOUR TINTS === */
@@ -93,13 +102,13 @@
       border-color: color-mix(in srgb, var(--tile-purple) 40%, transparent);
     }
     .time:hover{ background: color-mix(in srgb, var(--tile-purple) 34%, rgba(255,255,255,.10)); border-color: color-mix(in srgb, var(--tile-purple) 52%, transparent); }
-    .time .clock{ font-size:60px; font-weight:800; letter-spacing:.5px; }
-    .time .date{ font-size:16px; opacity:.9; margin-top: 4px; }
+    .time .clock{ font-size: clamp(36px, 5vw, 60px); font-weight:800; letter-spacing:.5px; }
+    .time .date{ font-size: clamp(12px, 1.5vw, 16px); opacity:.9; margin-top: 4px; }
 
     .weather{ background: color-mix(in srgb, var(--tile-blue) 18%, rgba(255,255,255,.08)); border-color: color-mix(in srgb, var(--tile-blue) 40%, transparent); }
     .weather:hover{ background: color-mix(in srgb, var(--tile-blue) 24%, rgba(255,255,255,.10)); border-color: color-mix(in srgb, var(--tile-blue) 52%, transparent); }
-    .weather .temp{ font-size:60px; font-weight:800 }
-    .weather .cond{ font-size:16px; opacity:.9 }
+    .weather .temp{ font-size: clamp(36px, 5vw, 60px); font-weight:800 }
+    .weather .cond{ font-size: clamp(12px, 1.5vw, 16px); opacity:.9 }
     .weather .wrow{ display:flex; align-items:center; gap:12px; }
     .weather .wicon{ width: clamp(36px, 8vw, 86px); height:auto; flex:0 0 auto; filter: drop-shadow(0 2px 6px rgba(0,0,0,.25)); }
 
@@ -135,9 +144,9 @@
     }
     
     /* Adapt to tile sizes dynamically */
-    .size-1x1 .tileimg { width: 55%; height: 55%; }
-    .size-2x1 .tileimg { width: auto; height: 70%; max-width: 50%; }
-    .size-2x2 .tileimg { width: 55%; height: 55%; }
+    .size-1x1 .tileimg { width: 50%; height: 50%; }
+    .size-2x1 .tileimg { width: auto; height: 60%; max-width: 45%; }
+    .size-2x2 .tileimg { width: 50%; height: 50%; }
 
     /* --- SLIDER TILE --- */
     .slider-tile{ padding:0; } 
@@ -146,18 +155,62 @@
     .slider-tile .slide.active{ opacity:1; transform:translateX(0); }
     .slider-tile .slide img{ width:100%; height:100%; object-fit:cover; display:block; filter:brightness(50%); }
 
-    /* Metro entry */
+    /* === CAROUSEL FEATURE FOR RIGHT TILES === */
+    .carousel-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .carousel-viewport {
+      /* Height exactly matches 3 tiles plus the 2 gaps between them */
+      height: calc((var(--unit) * 3) + (var(--gap) * 2));
+      overflow-y: auto;
+      scroll-behavior: smooth;
+      /* Hide standard scrollbars for a clean look */
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      padding: 2px; /* Prevents box-shadows clipping */
+      margin: -2px;
+    }
+    .carousel-viewport::-webkit-scrollbar {
+      display: none;
+    }
+
+    .scroll-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, transform 0.1s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+    .scroll-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+    .scroll-btn:active {
+      transform: scale(0.9);
+    }
+
+    /* Metro entry animation */
     .dashboard .tile{ opacity:0; transform: translateX(12px) skewX(-4deg) }
     .dashboard.ready .tile{ animation: enter .5s both; }
-    /* Both grids will load top-to-bottom at the same time using this delay structure */
     .dashboard.ready .tile:nth-child(1){ animation-delay:.05s } .dashboard.ready .tile:nth-child(2){ animation-delay:.1s }
     .dashboard.ready .tile:nth-child(3){ animation-delay:.15s } .dashboard.ready .tile:nth-child(4){ animation-delay:.2s }
     .dashboard.ready .tile:nth-child(5){ animation-delay:.25s } .dashboard.ready .tile:nth-child(6){ animation-delay:.3s }
     .dashboard.ready .tile:nth-child(7){ animation-delay:.35s } .dashboard.ready .tile:nth-child(8){ animation-delay:.4s }
     .dashboard.ready .tile:nth-child(9){ animation-delay:.45s } .dashboard.ready .tile:nth-child(10){ animation-delay:.5s }
+    .dashboard.ready .tile:nth-child(n+11){ animation-delay:.55s }
     @keyframes enter{ to{ opacity:1; transform:none } }
 
-    /* === Animated background (Optimised) === */
+    /* === Animated background === */
     .animateme {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       overflow: hidden; z-index: 0; pointer-events:none;
@@ -167,7 +220,7 @@
       position: absolute; list-style: none; display: block;
       width: 40px; height: 40px; background-color: #353535; bottom: -100px;
       animation: square 25s infinite linear; opacity:0;
-      will-change: transform, opacity; /* Tells GPU to handle this for smooth performance */
+      will-change: transform, opacity;
     }
     .bg-bubbles li:nth-child(1){ left: 10%; width: 80px; height: 80px; border-radius:50%; background:transparent; border:4px solid #353535; }
     .bg-bubbles li:nth-child(2){ left: 25%; width: 120px; height: 120px; animation-delay: 2s; animation-duration: 17s; }
@@ -265,37 +318,66 @@
           </a>
         </div>
 
-        <!-- RIGHT SIDE: New Tiles -->
-        <div class="grid right">
-          <!-- Your Opinion -->
-          <a class="tile calendar size-2x1" href="#" aria-label="Your Opinion">
-            <div class="imgbox"><img class="tileimg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='8' height='4' x='8' y='2' rx='1' ry='1'/%3E%3Cpath d='M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2'/%3E%3Cpath d='m9 14 2 2 4-4'/%3E%3C/svg%3E" alt="Your Opinion" loading="lazy" /></div>
-            <div class="label">Your Opinion</div>
-          </a>
+        <!-- RIGHT SIDE: Scrollable Area -->
+        <div class="carousel-wrapper">
+          <!-- Up arrow button -->
+          <button class="scroll-btn up" id="scrollUp" aria-label="Scroll up">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+          </button>
 
-          <!-- Yellow Badge -->
-          <a class="tile yellow size-2x1" href="#" aria-label="Yellow Badge">
-            <div class="imgbox"><img class="tileimg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='18' x='3' y='3' rx='2'/%3E%3Ccircle cx='12' cy='10' r='3'/%3E%3Cpath d='M7 21v-2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2'/%3E%3C/svg%3E" alt="Yellow Badge" loading="lazy" /></div>
-            <div class="label">Yellow Badge</div>
-          </a>
+          <!-- Viewport shows exactly 3 tiles -->
+          <div class="carousel-viewport" id="rightViewport">
+            <div class="grid right">
+              
+              <!-- Your Opinion -->
+              <a class="tile calendar size-2x1" href="#" aria-label="Your Opinion">
+                <div class="imgbox"><img class="tileimg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='8' height='4' x='8' y='2' rx='1' ry='1'/%3E%3Cpath d='M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2'/%3E%3Cpath d='m9 14 2 2 4-4'/%3E%3C/svg%3E" alt="Your Opinion" loading="lazy" /></div>
+                <div class="label">Your Opinion</div>
+              </a>
 
-          <!-- Your Wellbeing -->
-          <a class="tile people size-2x1" href="#" aria-label="Your Wellbeing">
-            <div class="imgbox"><img class="tileimg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7.9 20A9 9 0 1 0 4 16.1L2 22Z'/%3E%3C/svg%3E" alt="Your Wellbeing" loading="lazy" /></div>
-            <div class="label">Your Wellbeing</div>
-          </a>
+              <!-- Yellow Badge -->
+              <a class="tile yellow size-2x1" href="#" aria-label="Yellow Badge">
+                <div class="imgbox"><img class="tileimg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='18' x='3' y='3' rx='2'/%3E%3Ccircle cx='12' cy='10' r='3'/%3E%3Cpath d='M7 21v-2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2'/%3E%3C/svg%3E" alt="Yellow Badge" loading="lazy" /></div>
+                <div class="label">Yellow Badge</div>
+              </a>
 
-          <!-- Printing Paper -->
-          <a class="tile links size-2x1" href="#" aria-label="Printing Paper">
-            <div class="imgbox"><img class="tileimg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2'/%3E%3Cpath d='M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6'/%3E%3Crect width='12' height='8' x='6' y='14' rx='1'/%3E%3C/svg%3E" alt="Printing Paper" loading="lazy" /></div>
-            <div class="label">Printing Paper</div>
-          </a>
+              <!-- Your Wellbeing -->
+              <a class="tile people size-2x1" href="#" aria-label="Your Wellbeing">
+                <div class="imgbox"><img class="tileimg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7.9 20A9 9 0 1 0 4 16.1L2 22Z'/%3E%3C/svg%3E" alt="Your Wellbeing" loading="lazy" /></div>
+                <div class="label">Your Wellbeing</div>
+              </a>
 
-          <!-- Room Scheduling -->
-          <a class="tile time size-2x1" href="#" aria-label="Room Scheduling">
-            <div class="imgbox"><img class="tileimg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='18' x='3' y='4' rx='2' ry='2'/%3E%3Cline x1='16' x2='16' y1='2' y2='6'/%3E%3Cline x1='8' x2='8' y1='2' y2='6'/%3E%3Cline x1='3' x2='21' y1='10' y2='10'/%3E%3C/svg%3E" alt="Room Scheduling" loading="lazy" /></div>
-            <div class="label">Room Scheduling</div>
-          </a>
+              <!-- Printing Paper -->
+              <a class="tile links size-2x1" href="#" aria-label="Printing Paper">
+                <div class="imgbox"><img class="tileimg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2'/%3E%3Cpath d='M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6'/%3E%3Crect width='12' height='8' x='6' y='14' rx='1'/%3E%3C/svg%3E" alt="Printing Paper" loading="lazy" /></div>
+                <div class="label">Printing Paper</div>
+              </a>
+
+              <!-- Room Scheduling -->
+              <a class="tile time size-2x1" href="#" aria-label="Room Scheduling">
+                <div class="imgbox"><img class="tileimg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='18' x='3' y='4' rx='2' ry='2'/%3E%3Cline x1='16' x2='16' y1='2' y2='6'/%3E%3Cline x1='8' x2='8' y1='2' y2='6'/%3E%3Cline x1='3' x2='21' y1='10' y2='10'/%3E%3C/svg%3E" alt="Room Scheduling" loading="lazy" /></div>
+                <div class="label">Room Scheduling</div>
+              </a>
+
+              <!-- Example Duplicated Tile to show scrolling -->
+              <a class="tile mail size-2x1" href="#" aria-label="More Options">
+                <div class="imgbox"><img class="tileimg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z'/%3E%3Cpath d='M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z'/%3E%3C/svg%3E" alt="More" loading="lazy" /></div>
+                <div class="label">Extra Scroll Item 1</div>
+              </a>
+
+              <!-- Example Duplicated Tile to show scrolling -->
+              <a class="tile photos size-2x1" href="#" aria-label="More Options 2">
+                <div class="imgbox"><img class="tileimg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='9' cy='7' r='4'/%3E%3Cpath d='M22 21v-2a4 4 0 0 0-3-3.87'/%3E%3Cpath d='M16 3.13a4 4 0 0 1 0 7.75'/%3E%3C/svg%3E" alt="More" loading="lazy" /></div>
+                <div class="label">Extra Scroll Item 2</div>
+              </a>
+
+            </div>
+          </div>
+          
+          <!-- Down arrow button -->
+          <button class="scroll-btn down" id="scrollDown" aria-label="Scroll down">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
         </div>
 
       </main>
@@ -305,6 +387,22 @@
   <script>
     const dashboard = document.getElementById('dashboard');
     window.addEventListener('load', ()=> dashboard.classList.add('ready'));
+
+    // Carousel Scrolling logic
+    const rightViewport = document.getElementById('rightViewport');
+    const scrollUpBtn = document.getElementById('scrollUp');
+    const scrollDownBtn = document.getElementById('scrollDown');
+
+    if (rightViewport && scrollUpBtn && scrollDownBtn) {
+      scrollDownBtn.addEventListener('click', () => {
+        // Scroll exactly the full height of the viewport (which equals 3 tiles)
+        rightViewport.scrollBy({ top: rightViewport.clientHeight, behavior: 'smooth' });
+      });
+
+      scrollUpBtn.addEventListener('click', () => {
+        rightViewport.scrollBy({ top: -rightViewport.clientHeight, behavior: 'smooth' });
+      });
+    }
 
     // Time (London)
     function updateClock(){
