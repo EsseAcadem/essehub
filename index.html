@@ -104,7 +104,6 @@
     .size-1x1{ grid-column: span 1; grid-row: span 1; min-width: var(--unit); }
     .size-2x1{ grid-column: span 2; grid-row: span 1; }
     .size-2x2{ grid-column: span 2; grid-row: span 2; }
-    .size-3x1{ grid-column: span 3; grid-row: span 1; } /* Added for Training block */
     .size-4x2{ grid-column: span 4; grid-row: span 2; }
     .size-4x1{ grid-column: span 4; grid-row: span 1; }
 
@@ -133,7 +132,7 @@
     .mail:hover{ background: color-mix(in srgb, var(--tile-orange) 44%, rgba(255,255,255,.10)); border-color: color-mix(in srgb, var(--tile-orange) 64%, transparent); }
 
     .calendar{ background: color-mix(in srgb, var(--tile-green) 18%, rgba(255,255,255,.08)); border-color: color-mix(in srgb, var(--tile-green) 40%, transparent); }
-    .calendar:hover{ background: color-mix(in srgb, var(--tile-green) 24%, rgba(255,255,255,.10)); border-color: color-mix(in srgb, var(--tile-green) 52%, transparent); }
+    .calendar:hover{ background: color-mix(in srgb, var(--tile-green) 24%, rgba(255,255,255,.10)); border-color: color-mix(in srgb, var(--tile-green) 40%, transparent); }
 
     .people{ background: color-mix(in srgb, var(--tile-pink) 28%, rgba(255,255,255,.08)); border-color: color-mix(in srgb, var(--tile-pink) 40%, transparent); }
     .people:hover{ background: color-mix(in srgb, var(--tile-pink) 34%, rgba(255,255,255,.10)); border-color: color-mix(in srgb, var(--tile-pink) 52%, transparent); }
@@ -162,7 +161,6 @@
     .size-1x1 .tileimg { width: 55%; height: 55%; }
     .size-2x1 .tileimg { width: auto; height: 70%; max-width: 50%; }
     .size-2x2 .tileimg { width: 55%; height: 55%; }
-    .size-3x1 .tileimg { width: auto; height: 70%; max-width: 40%; }
 
     /* --- SLIDER TILE --- */
     .slider-tile{ padding:0; } 
@@ -282,12 +280,17 @@
             <div class="label">Your Well-being</div>
           </a>
 
-          <!-- Training -->
-          <a class="tile photos size-3x1" href="training.html" aria-label="Training">
-            <div class="imgbox"><img class="tileimg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z'/%3E%3Cpath d='M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z'/%3E%3C/svg%3E" alt="Training" loading="lazy" /></div>
-            <div class="label">Training</div>
+          <!-- Essentia COH Training -->
+          <a class="tile links size-1x1" href="http://essentiaacademy.short.gy/coh" target="_blank" rel="noopener noreferrer" aria-label="Essentia COH Training">
+            <div class="imgbox"><img class="tileimg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z'/%3E%3Cpath d='M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z'/%3E%3C/svg%3E" alt="Links" loading="lazy" /></div>
+            <div class="label">Essentia COH Training</div>
           </a>
 
+          <!-- Training -->
+          <a class="tile photos size-2x1" href="training.html" aria-label="Training">
+            <div class="imgbox"><img class="tileimg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='18' x='3' y='3' rx='2'/%3E%3Cpath d='M3 9h18'/%3E%3Cpath d='M3 15h18'/%3E%3Cpath d='M9 3v18'/%3E%3Cpath d='M15 3v18'/%3E%3C/svg%3E" alt="Training" loading="lazy" /></div>
+            <div class="label">Training</div>
+          </a>
         </div>
 
         <!-- RIGHT SIDE: New Tiles -->
