@@ -1211,6 +1211,226 @@
       }
     }
 
+
+
+    /* === DETAIL PAGE BREATHING ROOM / CONTENT ZONING === */
+    .hub-page-content{
+      gap:0;
+    }
+
+    .hub-page-title{
+      margin:0 0 24px;
+    }
+
+    .wellbeing-detail-grid{
+      gap:clamp(30px, 4vw, 48px);
+    }
+
+    .wellbeing-detail-copy,
+    .wellbeing-detail-side{
+      min-width:0;
+    }
+
+    /* Main copy is grouped into calm translucent sections rather than
+       sitting directly on the full-colour glass background. */
+    .wellbeing-detail-copy > p,
+    .wellbeing-detail-copy > ul{
+      position:relative;
+    }
+
+    .wellbeing-detail-copy > h2{
+      margin-top:24px;
+      margin-bottom:10px;
+    }
+
+    .wellbeing-detail-copy > h2:first-of-type{
+      margin-top:18px;
+    }
+
+    .wellbeing-detail-copy > ul{
+      padding:12px;
+      border-radius:18px;
+      background:rgba(255,255,255,.045);
+      border:1px solid rgba(255,255,255,.06);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+    }
+
+    .wellbeing-detail-copy li{
+      background:rgba(255,255,255,.055);
+      border-color:rgba(255,255,255,.07);
+    }
+
+    .wellbeing-detail-copy p{
+      max-width:68ch;
+    }
+
+    /* Side information becomes a lighter glass panel inside the main card. */
+    .wellbeing-detail-side{
+      border-radius:22px;
+      background:rgba(255,255,255,.055);
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.05),
+        0 8px 24px rgba(0,0,0,.05);
+      padding:24px 26px;
+    }
+
+    .wellbeing-detail-side h2{
+      margin-bottom:14px;
+    }
+
+    .wellbeing-contact{
+      padding:10px 0;
+      border-bottom:1px solid rgba(255,255,255,.07);
+    }
+
+    .wellbeing-contact:last-child{
+      border-bottom:0;
+      padding-bottom:0;
+    }
+
+    .wellbeing-note{
+      margin:0;
+      padding:12px 14px;
+      border-radius:14px;
+      background:rgba(255,255,255,.045);
+      border:1px solid rgba(255,255,255,.06);
+    }
+
+    .wellbeing-big-phone{
+      display:block;
+      margin:8px 0;
+      padding:12px 14px;
+      border-radius:14px;
+      background:rgba(255,255,255,.055);
+      border:1px solid rgba(255,255,255,.07);
+    }
+
+    @media (min-width:1100px) and (min-height:720px){
+      .hub-page-content{
+        padding:32px 38px 30px;
+      }
+
+      .hub-page-title{
+        margin-bottom:26px;
+      }
+
+      .wellbeing-detail-grid{
+        gap:34px;
+      }
+
+      .wellbeing-detail-copy > h2{
+        margin-top:22px;
+      }
+
+      .wellbeing-detail-side{
+        padding:22px 24px;
+      }
+    }
+
+
+
+    /* === DETAIL PAGE READABILITY PASS ===
+       Keep the same overall card size, but give the content more breathing room.
+    */
+    .hub-page-content{
+      padding:clamp(34px, 4vw, 52px);
+    }
+
+    .hub-page-title{
+      margin:0 0 30px;
+      line-height:1.08;
+    }
+
+    .wellbeing-detail-grid{
+      gap:clamp(38px, 4.5vw, 58px);
+      align-items:start;
+    }
+
+    .wellbeing-detail-copy{
+      line-height:1.62;
+    }
+
+    .wellbeing-detail-copy > p{
+      margin:0 0 22px;
+      max-width:62ch;
+    }
+
+    .wellbeing-detail-copy > h2{
+      margin:30px 0 14px;
+    }
+
+    .wellbeing-detail-copy > h2:first-of-type{
+      margin-top:24px;
+    }
+
+    .wellbeing-detail-copy > ul{
+      margin:0 0 24px;
+      padding:14px;
+      gap:10px;
+    }
+
+    .wellbeing-detail-copy li{
+      padding:11px 14px 11px 40px;
+      line-height:1.45;
+    }
+
+    .wellbeing-detail-copy li::before{
+      top:11px;
+      left:12px;
+    }
+
+    .wellbeing-detail-side{
+      padding:28px 30px;
+      gap:18px;
+      line-height:1.52;
+    }
+
+    .wellbeing-detail-side h2{
+      margin:0 0 18px;
+    }
+
+    .wellbeing-contact{
+      padding:13px 0;
+      gap:6px;
+      line-height:1.45;
+    }
+
+    .wellbeing-note{
+      padding:14px 16px;
+      line-height:1.5;
+    }
+
+    .wellbeing-big-phone{
+      padding:14px 16px;
+      margin:10px 0;
+    }
+
+    @media (min-width:1100px) and (min-height:720px){
+      .spiritual-card .wellbeing-detail-side{
+        column-gap:30px;
+        row-gap:18px;
+      }
+
+      .spiritual-card .wellbeing-detail-side .wellbeing-contact{
+        padding:10px 0 14px;
+      }
+
+      .spiritual-card .wellbeing-detail-side > h2{
+        margin-bottom:4px;
+      }
+    }
+
+    @media (max-width:1099px){
+      .hub-page-content{
+        padding:30px;
+      }
+
+      .wellbeing-detail-grid{
+        gap:30px;
+      }
+    }
+
 </style>
 </head>
 <body>
