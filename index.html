@@ -1,11 +1,67 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Essentia 🄷🅄🄱</title>
-  <meta name="theme-color" content="#0f6a7a" />
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
+<title>Essentia 🄷🅄🄱</title>
+<meta content="#0f6a7a" name="theme-color"/>
+<script>
+(function () {
+  var params = new URLSearchParams(window.location.search);
+  var forced = (params.get('perf') || '').toLowerCase();
+  var valid = ['full', 'lite', 'eco'];
+
+  function supportsBackdrop() {
+    try {
+      return !!(window.CSS && (
+        CSS.supports('backdrop-filter', 'blur(1px)') ||
+        CSS.supports('-webkit-backdrop-filter', 'blur(1px)')
+      ));
+    } catch (e) {
+      return false;
+    }
+  }
+
+  var tier = 'full';
+
+  if (valid.indexOf(forced) !== -1) {
+    tier = forced;
+  } else {
+    var reduceMotion = false;
+    try {
+      reduceMotion = window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch (e) {}
+
+    var saveData = !!(
+      navigator.connection &&
+      navigator.connection.saveData
+    );
+
+    var cores = Number(navigator.hardwareConcurrency || 0);
+    var memory = Number(navigator.deviceMemory || 0);
+
+    if (!supportsBackdrop() || reduceMotion || saveData) {
+      tier = 'eco';
+    } else if (
+      (cores && cores <= 2) ||
+      (memory && memory <= 2)
+    ) {
+      tier = 'eco';
+    } else if (
+      (cores && cores <= 4) ||
+      (memory && memory <= 4)
+    ) {
+      tier = 'lite';
+    }
+  }
+
+  document.documentElement.setAttribute('data-performance', tier);
+  window.ESSENTIA_PERFORMANCE_TIER = tier;
+})();
+</script>
+<style>
     :root{
       --bg:#0f6a7a; --bg2:#0a5561; --text:#f5f8fb;
       --tile-blue:#2d89ef; --tile-green:#00a300; --tile-purple:#7e3878; --tile-orange:#da532c; --tile-pink:#e671b8; --tile-cyan:#00aba9; --tile-yellow:#ffc40d;
@@ -45,7 +101,7 @@
     }
     
     /* Slightly increased logo size */
-    .brand img{ height: clamp(55px, 8vw, 110px); width:auto; display:block }
+    .brand img{ height: clamp(36px, 4.5vw, 58px); width:auto; display:block }
 
     /* Split Dashboard Layout */
     .dashboard {
@@ -107,7 +163,16 @@
     .size-4x2{ grid-column: span 4; grid-row: span 2; }
     .size-4x1{ grid-column: span 4; grid-row: span 1; }
 
-    .label{ position:absolute; left:12px; bottom:10px; font-weight:400; opacity:.95; font-size: clamp(0.8rem, 1.2vw, 0.95rem); margin:0; }
+    .label{
+      position:absolute;
+      left:14px;
+      bottom:12px;
+      font-weight:400;
+      font-size:clamp(.76rem, 1vw, .9rem);
+      color:rgba(255,255,255,.76);
+      line-height:1.15;
+      text-shadow:0 1px 2px rgba(0,0,0,.12);
+    }
     .icon{ font-size:34px; line-height:1 }
 
     /* === COLOUR TINTS === */
@@ -169,16 +234,6 @@
     .slider-tile .slide.active{ opacity:1; transform:translateX(0); }
     .slider-tile .slide img{ width:100%; height:100%; object-fit:cover; display:block; filter:brightness(50%); }
 
-    /* Metro entry */
-    .dashboard .tile{ opacity:0; transform: translateX(12px) skewX(-4deg) }
-    .dashboard.ready .tile{ animation: enter .5s both; }
-    .dashboard.ready .tile:nth-child(1){ animation-delay:.05s } .dashboard.ready .tile:nth-child(2){ animation-delay:.1s }
-    .dashboard.ready .tile:nth-child(3){ animation-delay:.15s } .dashboard.ready .tile:nth-child(4){ animation-delay:.2s }
-    .dashboard.ready .tile:nth-child(5){ animation-delay:.25s } .dashboard.ready .tile:nth-child(6){ animation-delay:.3s }
-    .dashboard.ready .tile:nth-child(7){ animation-delay:.35s } .dashboard.ready .tile:nth-child(8){ animation-delay:.4s }
-    .dashboard.ready .tile:nth-child(9){ animation-delay:.45s } .dashboard.ready .tile:nth-child(10){ animation-delay:.5s }
-    @keyframes enter{ to{ opacity:1; transform:none } }
-
     /* === Animated background (Optimised) === */
     .animateme {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -187,146 +242,1384 @@
     .bg-bubbles { position: absolute; inset: 0; z-index: 1; margin:0; padding:0; }
     .bg-bubbles li {
       position: absolute; list-style: none; display: block;
-      width: 40px; height: 40px; background-color: #353535; bottom: -100px;
+      width: 40px; height: 40px; background-color: rgba(150, 198, 142, 0.24); bottom: -100px;
       animation: square 25s infinite linear; opacity:0;
       will-change: transform, opacity;
     }
-    .bg-bubbles li:nth-child(1){ left: 10%; width: 80px; height: 80px; border-radius:50%; background:transparent; border:4px solid #353535; }
+    .bg-bubbles li:nth-child(1){ left: 10%; width: 80px; height: 80px; border-radius:50%; background:transparent; border:4px solid rgba(150, 198, 142, 0.24); }
     .bg-bubbles li:nth-child(2){ left: 25%; width: 120px; height: 120px; animation-delay: 2s; animation-duration: 17s; }
     .bg-bubbles li:nth-child(3){ left: 45%; width: 60px; height: 60px; animation-duration: 22s; }
-    .bg-bubbles li:nth-child(4){ left: 65%; width: 100px; height: 100px; animation-delay: 4s; border-radius:50%; background:transparent; border:4px solid #353535; }
-    .bg-bubbles li:nth-child(5){ left: 80%; width: 150px; height: 150px; animation-delay: 7s; animation-duration: 35s; background:transparent; border:4px solid #353535; }
+    .bg-bubbles li:nth-child(4){ left: 65%; width: 100px; height: 100px; animation-delay: 4s; border-radius:50%; background:transparent; border:4px solid rgba(150, 198, 142, 0.24); }
+    .bg-bubbles li:nth-child(5){ left: 80%; width: 150px; height: 150px; animation-delay: 7s; animation-duration: 35s; background:transparent; border:4px solid rgba(150, 198, 142, 0.24); }
     .bg-bubbles li:nth-child(6){ left: 90%; width: 40px; height: 40px; animation-delay: 11s; border-radius:50%; }
 
     @keyframes square {
       0% { transform: translateY(0); opacity:0; }
-      20% { opacity: 0.6; } 
-      80% { opacity: 0.6; }
+      20% { opacity: 0.32; } 
+      80% { opacity: 0.32; }
       100% { transform: translateY(-120vh) rotate(600deg); opacity:0; }
     }
-  </style>
+  
+
+    /* === APPROVED LIQUID GLASS TEST === */
+    .tile.liquidGlass-wrapper{
+      position:relative;
+      display:flex;
+      font-weight:600;
+      overflow:hidden;
+      box-shadow:0 6px 6px rgba(0,0,0,.18),0 0 20px rgba(0,0,0,.08);
+      transition:transform .28s ease,box-shadow .28s ease;
+      isolation:isolate;
+      padding:0;
+      background:transparent;
+      border:none;
+      -webkit-backdrop-filter:none;
+      backdrop-filter:none;
+      border-radius:28px;
+      gap:0;
+    }
+
+    .tile.liquidGlass-wrapper > div{ border-radius:28px; }
+
+    .liquidGlass-effect{
+      position:absolute;
+      z-index:0;
+      inset:0;
+      backdrop-filter:blur(3px);
+      -webkit-backdrop-filter:blur(3px);
+      filter:url(#glass-distortion);
+      overflow:hidden;
+      pointer-events:none;
+    }
+
+    .liquidGlass-tint{
+      z-index:1;
+      position:absolute;
+      inset:0;
+      background:rgba(255,255,255,.16);
+      pointer-events:none;
+    }
+
+    .liquidGlass-shine{
+      position:absolute;
+      inset:0;
+      z-index:2;
+      overflow:hidden;
+      pointer-events:none;
+      box-shadow:inset 1px 1px 1px 0 rgba(255,255,255,.28),
+                 inset -1px -1px 1px 0 rgba(255,255,255,.16);
+    }
+
+    .liquidGlass-text{
+      position:relative;
+      z-index:3;
+      width:100%;
+      height:100%;
+      color:#fff;
+      padding:10px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+
+    .tile.liquidGlass-wrapper:hover{
+      transform:translateY(-2px);
+      box-shadow:0 8px 10px rgba(0,0,0,.20),0 0 24px rgba(0,0,0,.10);
+    }
+
+    .tile.liquidGlass-wrapper:active{ transform:scale(.988); }
+
+    /* Preserve the old template colours exactly, but on the tint layer */
+    .tile.liquidGlass-wrapper.time .liquidGlass-tint{
+      background:color-mix(in srgb,var(--tile-purple) 28%,rgba(255,255,255,.08));
+    }
+    .tile.liquidGlass-wrapper.time:hover .liquidGlass-tint{
+      background:color-mix(in srgb,var(--tile-purple) 34%,rgba(255,255,255,.10));
+    }
+
+    .tile.liquidGlass-wrapper.weather .liquidGlass-tint{
+      background:color-mix(in srgb,var(--tile-blue) 18%,rgba(255,255,255,.08));
+    }
+    .tile.liquidGlass-wrapper.weather:hover .liquidGlass-tint{
+      background:color-mix(in srgb,var(--tile-blue) 24%,rgba(255,255,255,.10));
+    }
+
+    .tile.liquidGlass-wrapper.mail .liquidGlass-tint{
+      background:color-mix(in srgb,var(--tile-orange) 40%,rgba(255,255,255,.08));
+    }
+    .tile.liquidGlass-wrapper.mail:hover .liquidGlass-tint{
+      background:color-mix(in srgb,var(--tile-orange) 44%,rgba(255,255,255,.10));
+    }
+
+    .tile.liquidGlass-wrapper.calendar .liquidGlass-tint{
+      background:color-mix(in srgb,var(--tile-green) 18%,rgba(255,255,255,.08));
+    }
+    .tile.liquidGlass-wrapper.calendar:hover .liquidGlass-tint{
+      background:color-mix(in srgb,var(--tile-green) 24%,rgba(255,255,255,.10));
+    }
+
+    .tile.liquidGlass-wrapper.people .liquidGlass-tint{
+      background:color-mix(in srgb,var(--tile-pink) 28%,rgba(255,255,255,.08));
+    }
+    .tile.liquidGlass-wrapper.people:hover .liquidGlass-tint{
+      background:color-mix(in srgb,var(--tile-pink) 34%,rgba(255,255,255,.10));
+    }
+
+    .tile.liquidGlass-wrapper.links .liquidGlass-tint{
+      background:color-mix(in srgb,var(--tile-blue) 18%,rgba(255,255,255,.08));
+    }
+    .tile.liquidGlass-wrapper.links:hover .liquidGlass-tint{
+      background:color-mix(in srgb,var(--tile-blue) 24%,rgba(255,255,255,.10));
+    }
+
+    .tile.liquidGlass-wrapper.photos .liquidGlass-tint{
+      background:color-mix(in srgb,var(--tile-cyan) 18%,rgba(255,255,255,.08));
+    }
+    .tile.liquidGlass-wrapper.photos:hover .liquidGlass-tint{
+      background:color-mix(in srgb,var(--tile-cyan) 24%,rgba(255,255,255,.10));
+    }
+
+    .tile.liquidGlass-wrapper.yellow .liquidGlass-tint{
+      background:color-mix(in srgb,var(--tile-yellow) 30%,rgba(255,255,255,.08));
+    }
+    .tile.liquidGlass-wrapper.yellow:hover .liquidGlass-tint{
+      background:color-mix(in srgb,var(--tile-yellow) 36%,rgba(255,255,255,.10));
+    }
+
+    .tile.liquidGlass-wrapper.time > .liquidGlass-text{
+      align-items:flex-start;
+      justify-content:space-between;
+    }
+
+
+    /* === ESSENTIA HUB ADAPTIVE PERFORMANCE TIERS ===
+       FULL: approved live refraction.
+       LITE: glass blur/colour/shine, no SVG displacement, fewer/slower moving shapes.
+       ECO: colour/shine only, no backdrop processing, no moving background shapes.
+    */
+
+    html[data-performance="lite"] .liquidGlass-effect{
+      filter:none;
+      backdrop-filter:blur(2px);
+      -webkit-backdrop-filter:blur(2px);
+    }
+
+    html[data-performance="lite"] .bg-bubbles li{
+      animation-duration:45s !important;
+    }
+
+    html[data-performance="lite"] .bg-bubbles li:nth-child(3),
+    html[data-performance="lite"] .bg-bubbles li:nth-child(6){
+      display:none;
+    }
+
+    html[data-performance="eco"] .liquidGlass-effect{
+      filter:none;
+      backdrop-filter:none;
+      -webkit-backdrop-filter:none;
+    }
+
+    html[data-performance="eco"] .bg-bubbles li{
+      display:none;
+    }
+
+    html[data-performance="eco"] .tile.liquidGlass-wrapper{
+      transition:none;
+      box-shadow:0 4px 10px rgba(0,0,0,.16);
+    }
+
+    html[data-performance="eco"] .tile.liquidGlass-wrapper:hover,
+    html[data-performance="eco"] .tile.liquidGlass-wrapper:active{
+      transform:none;
+    }
+
+    html[data-performance="eco"] .liquidGlass-shine{
+      box-shadow:
+        inset 1px 1px 1px 0 rgba(255,255,255,.34),
+        inset -1px -1px 1px 0 rgba(255,255,255,.18);
+    }
+
+    html[data-performance="eco"] .slider-tile .slide{
+      transition:none;
+      transform:none;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .bg-bubbles li{
+        animation:none !important;
+        display:none !important;
+      }
+
+      .tile.liquidGlass-wrapper{
+        transition:none !important;
+      }
+
+      .tile.liquidGlass-wrapper:hover,
+      .tile.liquidGlass-wrapper:active{
+        transform:none !important;
+      }
+
+      .slider-tile .slide{
+        transition:none !important;
+        transform:none !important;
+      }
+    }
+
+
+
+    /* === SELF-CONTAINED HUB INTERNAL VIEWS === */
+    .hub-view{
+      width:min(1180px, calc(100vw - 48px));
+      margin:0 auto;
+    }
+
+    .hub-view[hidden]{
+      display:none !important;
+    }
+
+    .hub-page-card{
+      position:relative;
+      width:100%;
+      min-height:0;
+      max-height:var(--hub-home-content-height, 70vh);
+      overflow:hidden;
+      isolation:isolate;
+      border-radius:28px;
+      box-shadow:0 6px 6px rgba(0,0,0,.18),0 0 20px rgba(0,0,0,.08);
+    }
+
+    .hub-page-card > div{
+      border-radius:28px;
+    }
+
+    .hub-page-card .liquidGlass-tint{
+      background:color-mix(in srgb,var(--tile-orange) 34%,rgba(255,255,255,.10));
+    }
+
+    .hub-page-card .liquidGlass-text{
+      padding:0;
+      display:block;
+      height:auto;
+      max-height:inherit;
+      overflow:hidden;
+    }
+
+    .hub-page-content{
+      min-height:0;
+      max-height:inherit;
+      padding:clamp(24px, 4vw, 48px);
+      display:flex;
+      flex-direction:column;
+      overflow-y:auto;
+      overscroll-behavior:contain;
+      scrollbar-width:thin;
+      scrollbar-color:rgba(255,255,255,.34) transparent;
+    }
+
+    .hub-page-content::-webkit-scrollbar{
+      width:8px;
+    }
+
+    .hub-page-content::-webkit-scrollbar-track{
+      background:transparent;
+    }
+
+    .hub-page-content::-webkit-scrollbar-thumb{
+      background:rgba(255,255,255,.28);
+      border-radius:999px;
+    }
+
+    .hub-page-title{
+      margin:0 0 26px;
+      font-size:clamp(1.55rem, 2.7vw, 2.15rem);
+      line-height:1.05;
+      font-weight:800;
+    }
+
+    .wellbeing-layout{
+      flex:1;
+      display:grid;
+      grid-template-columns:minmax(0, 1.6fr) minmax(270px, .8fr);
+      gap:clamp(28px, 4vw, 54px);
+      align-items:center;
+    }
+
+    .wellbeing-copy{
+      max-width:760px;
+      font-size:clamp(.98rem, 1.35vw, 1.12rem);
+      line-height:1.7;
+    }
+
+    .wellbeing-copy p{
+      margin:0 0 18px;
+    }
+
+    .wellbeing-highlight{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      margin:4px 0 20px;
+    }
+
+    .wellbeing-diamond{
+      color:#ff7450;
+      font-size:1.1em;
+      line-height:1.7;
+      flex:0 0 auto;
+    }
+
+    .wellbeing-support{
+      align-self:stretch;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap:18px;
+      padding:clamp(22px, 3vw, 34px);
+      border-radius:22px;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:inset 1px 1px 0 rgba(255,255,255,.16);
+    }
+
+    .wellbeing-support-icon{
+      width:72px;
+      height:72px;
+      opacity:.70;
+    }
+
+    .wellbeing-support-kicker{
+      margin:0;
+      font-size:.92rem;
+      opacity:.82;
+    }
+
+    .wellbeing-phone{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      width:fit-content;
+      color:#fff;
+      text-decoration:none;
+      font-size:clamp(1.65rem, 3vw, 2.35rem);
+      line-height:1;
+      font-weight:700;
+    }
+
+    .wellbeing-hours{
+      margin:0;
+      font-size:.92rem;
+      font-weight:700;
+      opacity:.88;
+    }
+
+    .wellbeing-confidential{
+      margin:0;
+      font-size:.84rem;
+      line-height:1.45;
+      opacity:.82;
+    }
+
+    .hub-back{
+      margin-top:18px;
+      align-self:flex-start;
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      min-height:38px;
+      padding:8px 14px;
+      border-radius:12px;
+      color:#fff;
+      text-decoration:none;
+      font-weight:700;
+      background:rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:inset 1px 1px 0 rgba(255,255,255,.12);
+    }
+
+    .hub-back:hover{
+      background:rgba(255,255,255,.19);
+    }
+
+    html[data-performance="eco"] .hub-page-card{
+      box-shadow:0 4px 10px rgba(0,0,0,.16);
+    }
+
+    @media (max-width:800px){
+      .hub-view{
+        width:min(100%, calc(100vw - 32px));
+      }
+
+      .wellbeing-layout{
+        grid-template-columns:1fr;
+        align-items:start;
+      }
+
+      .wellbeing-support{
+        align-self:auto;
+      }
+
+      .hub-page-card{
+        min-height:auto;
+      }
+    }
+
+
+
+    /* Internal view visibility must override the dashboard's normal display rules */
+    #dashboard[hidden],
+    .hub-view[hidden]{
+      display:none !important;
+    }
+
+    /* === SAFE ENTRANCE ANIMATIONS ===
+       Animate only content/tint/shine layers so SVG backdrop refraction remains intact.
+    */
+    @keyframes hubContentEnter{
+      from{
+        opacity:0;
+        transform:translateY(10px) scale(.985);
+      }
+      to{
+        opacity:1;
+        transform:none;
+      }
+    }
+
+    @keyframes hubTintEnter{
+      from{ opacity:0; }
+      to{ opacity:1; }
+    }
+
+    @keyframes hubPhotoEnter{
+      from{
+        opacity:0;
+        transform:translateY(10px) scale(.985);
+      }
+      to{
+        opacity:1;
+        transform:none;
+      }
+    }
+
+    .hub-enter .liquidGlass-text{
+      animation:hubContentEnter .46s cubic-bezier(.2,.7,.2,1) both;
+    }
+
+    .hub-enter .liquidGlass-tint{
+      animation:hubTintEnter .38s ease both;
+    }
+
+    .hub-enter .liquidGlass-shine{
+      animation:hubTintEnter .46s ease both;
+    }
+
+    /* Stagger dashboard tiles without transforming the glass shell itself */
+    #dashboard.hub-entering .grid.left > .tile:nth-child(1) .liquidGlass-text,
+    #dashboard.hub-entering .grid.left > .tile:nth-child(1) .liquidGlass-tint,
+    #dashboard.hub-entering .grid.left > .tile:nth-child(1) .liquidGlass-shine{ animation-delay:.03s; }
+
+    #dashboard.hub-entering .grid.left > .tile:nth-child(2) .liquidGlass-text,
+    #dashboard.hub-entering .grid.left > .tile:nth-child(2) .liquidGlass-tint,
+    #dashboard.hub-entering .grid.left > .tile:nth-child(2) .liquidGlass-shine{ animation-delay:.07s; }
+
+    #dashboard.hub-entering .grid.left > .tile:nth-child(4) .liquidGlass-text,
+    #dashboard.hub-entering .grid.left > .tile:nth-child(4) .liquidGlass-tint,
+    #dashboard.hub-entering .grid.left > .tile:nth-child(4) .liquidGlass-shine{ animation-delay:.11s; }
+
+    #dashboard.hub-entering .grid.left > .tile:nth-child(5) .liquidGlass-text,
+    #dashboard.hub-entering .grid.left > .tile:nth-child(5) .liquidGlass-tint,
+    #dashboard.hub-entering .grid.left > .tile:nth-child(5) .liquidGlass-shine{ animation-delay:.15s; }
+
+    #dashboard.hub-entering .grid.left > .tile:nth-child(6) .liquidGlass-text,
+    #dashboard.hub-entering .grid.left > .tile:nth-child(6) .liquidGlass-tint,
+    #dashboard.hub-entering .grid.left > .tile:nth-child(6) .liquidGlass-shine{ animation-delay:.19s; }
+
+    #dashboard.hub-entering .grid.left > .tile:nth-child(7) .liquidGlass-text,
+    #dashboard.hub-entering .grid.left > .tile:nth-child(7) .liquidGlass-tint,
+    #dashboard.hub-entering .grid.left > .tile:nth-child(7) .liquidGlass-shine{ animation-delay:.23s; }
+
+    #dashboard.hub-entering .grid.left > .tile:nth-child(8) .liquidGlass-text,
+    #dashboard.hub-entering .grid.left > .tile:nth-child(8) .liquidGlass-tint,
+    #dashboard.hub-entering .grid.left > .tile:nth-child(8) .liquidGlass-shine{ animation-delay:.27s; }
+
+    #dashboard.hub-entering .grid.right > .tile:nth-child(1) .liquidGlass-text,
+    #dashboard.hub-entering .grid.right > .tile:nth-child(1) .liquidGlass-tint,
+    #dashboard.hub-entering .grid.right > .tile:nth-child(1) .liquidGlass-shine{ animation-delay:.10s; }
+
+    #dashboard.hub-entering .grid.right > .tile:nth-child(2) .liquidGlass-text,
+    #dashboard.hub-entering .grid.right > .tile:nth-child(2) .liquidGlass-tint,
+    #dashboard.hub-entering .grid.right > .tile:nth-child(2) .liquidGlass-shine{ animation-delay:.15s; }
+
+    #dashboard.hub-entering .grid.right > .tile:nth-child(3) .liquidGlass-text,
+    #dashboard.hub-entering .grid.right > .tile:nth-child(3) .liquidGlass-tint,
+    #dashboard.hub-entering .grid.right > .tile:nth-child(3) .liquidGlass-shine{ animation-delay:.20s; }
+
+    #dashboard.hub-entering .grid.right > .tile:nth-child(4) .liquidGlass-text,
+    #dashboard.hub-entering .grid.right > .tile:nth-child(4) .liquidGlass-tint,
+    #dashboard.hub-entering .grid.right > .tile:nth-child(4) .liquidGlass-shine{ animation-delay:.25s; }
+
+    /* The photo tile is not refractive, so it can safely animate as a whole. */
+    #dashboard.hub-entering .slider-tile{
+      animation:hubPhotoEnter .5s .11s cubic-bezier(.2,.7,.2,1) both;
+    }
+
+    /* Internal full-page glass card entrance */
+    .hub-view.hub-entering .hub-page-card .liquidGlass-text{
+      animation:hubContentEnter .5s .07s cubic-bezier(.2,.7,.2,1) both;
+    }
+
+    .hub-view.hub-entering .hub-page-card .liquidGlass-tint{
+      animation:hubTintEnter .42s ease both;
+    }
+
+    .hub-view.hub-entering .hub-page-card .liquidGlass-shine{
+      animation:hubTintEnter .48s .03s ease both;
+    }
+
+    /* Eco and reduced-motion tiers remain cheap and accessible */
+    html[data-performance="eco"] .hub-enter .liquidGlass-text,
+    html[data-performance="eco"] .hub-enter .liquidGlass-tint,
+    html[data-performance="eco"] .hub-enter .liquidGlass-shine,
+    html[data-performance="eco"] #dashboard.hub-entering .slider-tile,
+    html[data-performance="eco"] .hub-view.hub-entering .hub-page-card .liquidGlass-text,
+    html[data-performance="eco"] .hub-view.hub-entering .hub-page-card .liquidGlass-tint,
+    html[data-performance="eco"] .hub-view.hub-entering .hub-page-card .liquidGlass-shine{
+      animation:none !important;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .hub-enter .liquidGlass-text,
+      .hub-enter .liquidGlass-tint,
+      .hub-enter .liquidGlass-shine,
+      #dashboard.hub-entering .slider-tile,
+      .hub-view.hub-entering .hub-page-card .liquidGlass-text,
+      .hub-view.hub-entering .hub-page-card .liquidGlass-tint,
+      .hub-view.hub-entering .hub-page-card .liquidGlass-shine{
+        animation:none !important;
+      }
+    }
+
+
+
+    /* Keep the centred HUB shell exactly the same size as Home.
+       Internal pages can never push the logo/header up or down. */
+    .block{
+      min-width:var(--hub-home-width, auto);
+      height:var(--hub-home-height, auto);
+      min-height:0;
+    }
+
+
+
+    /* === WELL-BEING INTERNAL MENU + DETAIL VIEWS === */
+    .wellbeing-menu-view{
+      width:min(1040px, calc(100vw - 48px));
+      margin:0 auto;
+    }
+
+    .wellbeing-menu-shell{
+      display:flex;
+      flex-direction:column;
+      gap:22px;
+    }
+
+    .wellbeing-menu-heading{
+      margin:0;
+      font-size:clamp(1.45rem, 2.4vw, 2rem);
+      line-height:1;
+      font-weight:800;
+    }
+
+    .wellbeing-menu-subtitle{
+      margin:-8px 0 0;
+      font-size:.95rem;
+      opacity:.78;
+    }
+
+    .wellbeing-topic-grid{
+      display:grid;
+      grid-template-columns:repeat(3, 170px);
+      gap:18px;
+      width:fit-content;
+      max-width:100%;
+      margin:0 auto;
+      justify-content:center;
+    }
+
+    .wellbeing-topic{
+      width:170px;
+      height:170px;
+      min-width:170px;
+      min-height:170px;
+      border-radius:28px;
+      padding:0;
+      gap:0;
+    }
+
+    .wellbeing-topic > div{
+      border-radius:28px;
+    }
+
+    .wellbeing-topic .liquidGlass-text{
+      padding:18px;
+      justify-content:flex-end;
+    }
+
+    .wellbeing-topic .topic-icon{
+      position:absolute;
+      inset:18px 18px 58px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .wellbeing-topic .topic-icon svg{
+      width:60px;
+      height:60px;
+      opacity:.62;
+    }
+
+    .wellbeing-topic .topic-title{
+      position:absolute;
+      left:14px;
+      right:14px;
+      bottom:14px;
+      margin:0;
+      font-size:.92rem;
+      font-weight:400;
+      line-height:1.15;
+      color:rgba(255,255,255,.76);
+      text-shadow:0 1px 2px rgba(0,0,0,.12);
+      text-align:center;
+    }
+
+    .wellbeing-menu-back{
+      margin-top:4px;
+    }
+
+    .wellbeing-detail-grid{
+      display:grid;
+      grid-template-columns:minmax(0, 1.35fr) minmax(270px, .8fr);
+      gap:clamp(24px, 3.5vw, 42px);
+      align-items:start;
+    }
+
+    .wellbeing-detail-copy{
+      font-size:clamp(.95rem, 1.22vw, 1.05rem);
+      line-height:1.58;
+    }
+
+    .wellbeing-detail-copy p{
+      margin:0 0 16px;
+    }
+
+    .wellbeing-detail-copy h2,
+    .wellbeing-detail-side h2{
+      margin:0 0 12px;
+      font-size:1.03rem;
+      line-height:1.15;
+    }
+
+    .wellbeing-detail-copy ul,
+    .wellbeing-detail-side ul{
+      list-style:none;
+      margin:0 0 18px;
+      padding:0;
+      display:grid;
+      gap:8px;
+    }
+
+    .wellbeing-detail-copy li,
+    .wellbeing-detail-side li{
+      position:relative;
+      margin:0;
+      padding:9px 12px 9px 38px;
+      border-radius:12px;
+      background:rgba(255,255,255,.055);
+      border:1px solid rgba(255,255,255,.09);
+    }
+
+    .wellbeing-detail-copy li::before,
+    .wellbeing-detail-side li::before{
+      content:"✓";
+      position:absolute;
+      left:12px;
+      top:9px;
+      width:18px;
+      height:18px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:50%;
+      font-size:.72rem;
+      font-weight:800;
+      background:rgba(255,255,255,.15);
+      color:#fff;
+    }
+
+    .wellbeing-detail-copy h2,
+    .wellbeing-detail-side h2{
+      display:flex;
+      align-items:center;
+      gap:7px;
+      line-height:1.2;
+    }
+
+    .detail-heading-glyph{
+      display:inline-flex;
+      flex:0 0 18px;
+      width:18px;
+      height:18px;
+      align-items:center;
+      justify-content:center;
+      border-radius:6px;
+      background:rgba(255,255,255,.11);
+      border:1px solid rgba(255,255,255,.08);
+      font-size:.66rem;
+      line-height:1;
+      font-weight:700;
+    }
+
+    .wellbeing-detail-side{
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+      padding:clamp(20px, 2.7vw, 30px);
+      border-radius:22px;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:inset 1px 1px 0 rgba(255,255,255,.16);
+      font-size:.93rem;
+      line-height:1.48;
+    }
+
+    .wellbeing-contact{
+      display:flex;
+      flex-direction:column;
+      gap:7px;
+    }
+
+    .wellbeing-contact a{
+      color:#fff;
+      text-decoration:none;
+      font-weight:700;
+    }
+
+    .wellbeing-contact a:hover{
+      text-decoration:underline;
+    }
+
+    .wellbeing-note{
+      margin:0;
+      opacity:.82;
+      font-size:.86rem;
+      line-height:1.45;
+    }
+
+    .wellbeing-big-phone{
+      display:block;
+      color:#fff;
+      text-decoration:none;
+      font-size:clamp(1.35rem, 2.4vw, 1.9rem);
+      font-weight:800;
+      line-height:1.08;
+      margin:2px 0 0;
+    }
+
+    .hub-page-card.spiritual-card .liquidGlass-tint{
+      background:color-mix(in srgb,var(--tile-purple) 28%,rgba(255,255,255,.10));
+    }
+
+    .hub-page-card.eap-card .liquidGlass-tint{
+      background:color-mix(in srgb,var(--tile-orange) 34%,rgba(255,255,255,.10));
+    }
+
+    .hub-page-card.vivup-card .liquidGlass-tint{
+      background:color-mix(in srgb,var(--tile-cyan) 24%,rgba(255,255,255,.10));
+    }
+
+    /* Stagger the three Well-being menu tiles safely */
+    .wellbeing-menu-view.hub-entering .wellbeing-topic:nth-child(1) .liquidGlass-text,
+    .wellbeing-menu-view.hub-entering .wellbeing-topic:nth-child(1) .liquidGlass-tint,
+    .wellbeing-menu-view.hub-entering .wellbeing-topic:nth-child(1) .liquidGlass-shine{
+      animation-delay:.04s;
+    }
+
+    .wellbeing-menu-view.hub-entering .wellbeing-topic:nth-child(2) .liquidGlass-text,
+    .wellbeing-menu-view.hub-entering .wellbeing-topic:nth-child(2) .liquidGlass-tint,
+    .wellbeing-menu-view.hub-entering .wellbeing-topic:nth-child(2) .liquidGlass-shine{
+      animation-delay:.10s;
+    }
+
+    .wellbeing-menu-view.hub-entering .wellbeing-topic:nth-child(3) .liquidGlass-text,
+    .wellbeing-menu-view.hub-entering .wellbeing-topic:nth-child(3) .liquidGlass-tint,
+    .wellbeing-menu-view.hub-entering .wellbeing-topic:nth-child(3) .liquidGlass-shine{
+      animation-delay:.16s;
+    }
+
+    @media (max-width:800px){
+      .wellbeing-menu-view{
+        width:min(100%, calc(100vw - 32px));
+      }
+
+      .wellbeing-topic-grid{
+        grid-template-columns:repeat(2, 160px);
+        gap:16px;
+      }
+
+      .wellbeing-topic{
+        width:160px;
+        height:160px;
+        min-width:160px;
+        min-height:160px;
+      }
+
+      .wellbeing-detail-grid{
+        grid-template-columns:1fr;
+      }
+    }
+
+
+
+    @media (max-height:720px){
+      .hub-page-card{
+        max-height:min(var(--hub-home-content-height, 62vh), 62vh);
+      }
+
+      .hub-page-content{
+        padding:22px 26px;
+      }
+    }
+
+
+
+    /* === HUB ALIGNMENT REFINEMENTS ===
+       Keep the centred logo/header exactly where it is, while giving
+       the content underneath a little more breathing room.
+    */
+    #dashboard,
+    .hub-view{
+      position:relative;
+      top:12px;
+    }
+
+    /* Bring the right-hand app column onto the same grid rhythm as the left. */
+    .dashboard{
+      gap:var(--gap);
+    }
+
+    /* Every internal Back control sits outside its glass card and is centred. */
+    .hub-back{
+      align-self:center;
+      justify-content:center;
+      margin:14px auto 0;
+    }
+
+    .hub-view{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+    }
+
+    .hub-view > .hub-page-card{
+      width:100%;
+      max-height:calc(var(--hub-home-content-height, 70vh) - 58px);
+    }
+
+    .wellbeing-menu-back{
+      align-self:center;
+      margin-left:auto;
+      margin-right:auto;
+    }
+
+
+
+    /* === DESKTOP DETAIL-CARD FIT ===
+       Use available desktop width more efficiently so internal scrolling is
+       only needed when the content genuinely cannot fit.
+    */
+    @media (min-width:1100px) and (min-height:720px){
+      .hub-view > .hub-page-card{
+        max-height:calc(var(--hub-home-content-height, 70vh) - 50px);
+      }
+
+      .hub-page-content{
+        padding:28px 34px 26px;
+      }
+
+      .hub-page-title{
+        margin-bottom:20px;
+      }
+
+      .wellbeing-detail-grid{
+        grid-template-columns:minmax(0, 1.45fr) minmax(300px, .72fr);
+        gap:28px;
+        align-items:start;
+      }
+
+      .wellbeing-detail-copy{
+        line-height:1.48;
+      }
+
+      .wellbeing-detail-copy p{
+        margin-bottom:13px;
+      }
+
+      .wellbeing-detail-copy ul,
+      .wellbeing-detail-side ul{
+        gap:6px;
+        margin-bottom:14px;
+      }
+
+      .wellbeing-detail-copy li,
+      .wellbeing-detail-side li{
+        padding-top:7px;
+        padding-bottom:7px;
+      }
+
+      .wellbeing-detail-copy li::before,
+      .wellbeing-detail-side li::before{
+        top:7px;
+      }
+
+      .wellbeing-detail-side{
+        gap:13px;
+        padding:20px 22px;
+        line-height:1.38;
+      }
+
+      .wellbeing-contact{
+        gap:4px;
+      }
+
+      /* Spiritual Care has several site contacts. On desktop, arrange those
+         contacts into two columns to avoid a scrollbar caused only by stacking. */
+      .spiritual-card .wellbeing-detail-side{
+        display:grid;
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+        column-gap:22px;
+        row-gap:12px;
+      }
+
+      .spiritual-card .wellbeing-detail-side > h2{
+        grid-column:1 / -1;
+        margin-bottom:0;
+      }
+
+      .spiritual-card .wellbeing-detail-side .wellbeing-contact:last-child{
+        grid-column:1 / -1;
+      }
+    }
+
+</style>
 </head>
 <body>
-  <div class="animateme">
-    <ul class="bg-bubbles">
-      <li></li><li></li><li></li><li></li><li></li><li></li>
-    </ul>
-  </div>
+<svg aria-hidden="true" style="display:none">
+<filter filterunits="objectBoundingBox" height="100%" id="glass-distortion" width="100%" x="0%" y="0%">
+<feturbulence basefrequency="0.01 0.01" numoctaves="1" result="turbulence" seed="5" type="fractalNoise"></feturbulence>
+<fecomponenttransfer in="turbulence" result="mapped">
+<fefuncr amplitude="1" exponent="10" offset="0.5" type="gamma"></fefuncr>
+<fefuncg amplitude="0" exponent="1" offset="0" type="gamma"></fefuncg>
+<fefuncb amplitude="0" exponent="1" offset="0.5" type="gamma"></fefuncb>
+</fecomponenttransfer>
+<fegaussianblur in="turbulence" result="softMap" stddeviation="3"></fegaussianblur>
+<fespecularlighting in="softMap" lighting-color="white" result="specLight" specularconstant="1" specularexponent="100" surfacescale="5">
+<fepointlight x="-200" y="-200" z="300"></fepointlight>
+</fespecularlighting>
+<fecomposite in="specLight" k1="0" k2="1" k3="1" k4="0" operator="arithmetic" result="litImage"></fecomposite>
+<fedisplacementmap in="SourceGraphic" in2="softMap" scale="150" xchannelselector="R" ychannelselector="G"></fedisplacementmap>
+</filter>
+</svg>
+<div class="animateme">
+<ul class="bg-bubbles">
+<li></li><li></li><li></li><li></li><li></li><li></li>
+</ul>
+</div>
+<div class="stage">
+<div class="block">
+<header>
+<div class="brand">
+<a aria-label="Essentia HUB home" href="#home"><img alt="Essentia Academy" src="https://raw.githubusercontent.com/EsseAcadem/essehub/95b20b6451e06c592fe3efa159639212d3fe4fe8/ehib_logo.png"/></a>
+</div>
+</header>
+<main class="dashboard" id="dashboard">
+<!-- LEFT SIDE: Original Tiles -->
+<div class="grid left">
+<!-- Time (London) -->
+<a aria-label="Current time in London" class="tile time size-2x2 liquidGlass-wrapper" href="#"><div class="liquidGlass-effect"></div><div class="liquidGlass-tint"></div><div class="liquidGlass-shine"></div><div class="liquidGlass-text">
+<div>
+<div class="clock" id="clock">—:—</div>
+<div class="date" id="date">Loading…</div>
+</div>
+<div class="label">London</div>
+</div></a>
+<!-- Weather (London) -->
+<a aria-label="Weather in London" class="tile weather size-4x1 liquidGlass-wrapper" href="#"><div class="liquidGlass-effect"></div><div class="liquidGlass-tint"></div><div class="liquidGlass-shine"></div><div class="liquidGlass-text">
+<div class="wrow" id="wrow">
+<div>
+<div class="temp" id="w-temp">--°C</div>
+<div class="cond" id="w-cond">Loading weather…</div>
+</div>
+</div>
+<div class="label">Weather</div>
+</div></a>
+<!-- Slider tile -->
+<a aria-label="Hub Slider" class="tile slider-tile size-4x2" href="#">
+<div class="slider" id="hubSlider">
+<div class="slide active"><img alt="" src="https://raw.githubusercontent.com/EsseAcadem/hub/073f232bde5dc709251fcfc26714ff301b0b2385/GDS.jpg"/></div>
+<div class="slide"><img alt="" loading="lazy" src="https://raw.githubusercontent.com/EsseAcadem/hub/073f232bde5dc709251fcfc26714ff301b0b2385/GUY.jpg"/></div>
+<div class="slide"><img alt="" loading="lazy" src="https://raw.githubusercontent.com/EsseAcadem/hub/073f232bde5dc709251fcfc26714ff301b0b2385/HAR.png"/></div>
+<div class="slide"><img alt="" loading="lazy" src="https://raw.githubusercontent.com/EsseAcadem/hub/073f232bde5dc709251fcfc26714ff301b0b2385/RBH.jpg"/></div>
+<div class="slide"><img alt="" loading="lazy" src="https://raw.githubusercontent.com/EsseAcadem/hub/073f232bde5dc709251fcfc26714ff301b0b2385/STH.jpg"/></div>
+</div>
+</a>
+<!-- Loop (Replaces the first half of the old Academy GO tile) -->
+<a aria-label="Loop" class="tile links size-1x1 liquidGlass-wrapper" href="https://web.loop.allocate-cloud.co.uk/loop" rel="noopener noreferrer" target="_blank"><div class="liquidGlass-effect"></div><div class="liquidGlass-tint"></div><div class="liquidGlass-shine"></div><div class="liquidGlass-text">
+<div class="imgbox"><img alt="Loop" class="tileimg" loading="lazy" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8'/%3E%3Cpath d='M3 3v5h5'/%3E%3Cpath d='M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16'/%3E%3Cpath d='M16 21v-5h5'/%3E%3C/svg%3E"/></div>
+<div class="label">Loop</div>
+</div></a>
+<!-- ESR (Replaces the second half of the old Academy GO tile) -->
+<a aria-label="ESR" class="tile yellow size-1x1 liquidGlass-wrapper" href="https://my.esr.nhs.uk/localresponse/?TAM_OP=login&amp;USERNAME=unauthenticated&amp;ERROR_CODE=0x00000000&amp;METHOD=GET&amp;URL=https%3A%2F%2Fmy.esr.nhs.uk%2Fdashboard%2Fc%2Fportal%2Flogin%3Fnav%3Dmyesr&amp;HOSTNAME=my.esr.nhs.uk&amp;FAILREASON=&amp;PROTOCOL=https" rel="noopener noreferrer" target="_blank"><div class="liquidGlass-effect"></div><div class="liquidGlass-tint"></div><div class="liquidGlass-shine"></div><div class="liquidGlass-text">
+<div class="imgbox"><img alt="ESR" class="tileimg" loading="lazy" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='9' cy='7' r='4'/%3E%3Cpath d='M22 21v-2a4 4 0 0 0-3-3.87'/%3E%3Cpath d='M16 3.13a4 4 0 0 1 0 7.75'/%3E%3C/svg%3E"/></div>
+<div class="label">ESR</div>
+</div></a><a aria-label="COH" class="tile people size-1x1 liquidGlass-wrapper" href="http://essentiaacademy.short.gy/coh" rel="noopener noreferrer" target="_blank"><div class="liquidGlass-effect"></div><div class="liquidGlass-tint"></div><div class="liquidGlass-shine"></div><div class="liquidGlass-text">
+<div class="imgbox"><img alt="Links" class="tileimg" loading="lazy" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z'/%3E%3Cpath d='M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z'/%3E%3C/svg%3E"/></div>
+<div class="label">COH</div>
+</div></a><a aria-label="Intranet" class="tile calendar size-1x1 liquidGlass-wrapper" href="https://intranet.gstt.nhs.uk" rel="noopener noreferrer" target="_blank"><div class="liquidGlass-effect"></div><div class="liquidGlass-tint"></div><div class="liquidGlass-shine"></div><div class="liquidGlass-text"><div class="imgbox"><img alt="Intranet" class="tileimg" loading="lazy" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 21h18'/%3E%3Cpath d='M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16'/%3E%3Cpath d='M9 7h.01'/%3E%3Cpath d='M15 7h.01'/%3E%3Cpath d='M9 11h.01'/%3E%3Cpath d='M15 11h.01'/%3E%3Cpath d='M9 15h.01'/%3E%3Cpath d='M15 15h.01'/%3E%3Cpath d='M10 21v-3h4v3'/%3E%3C/svg%3E"/></div><div class="label">Intranet</div></div></a><a aria-label="Your well-being" class="tile mail liquidGlass-wrapper size-2x1" href="#wellbeing"><div class="liquidGlass-effect"></div><div class="liquidGlass-tint"></div><div class="liquidGlass-shine"></div><div class="liquidGlass-text">
+<div class="imgbox"><img alt="People" class="tileimg" loading="lazy" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M8 14s1.5 2 4 2 4-2 4-2'/%3E%3Cline x1='9' y1='9' x2='9.01' y2='9'/%3E%3Cline x1='15' y1='9' x2='15.01' y2='9'/%3E%3C/svg%3E"/></div>
+<div class="label">Your Well-being</div>
+</div></a>
+<!-- Compliance -->
+<!-- Well-being -->
+<!-- Essentia COH Training -->
+<!-- Training -->
+<a aria-label="Room Scheduling" class="tile time size-2x1 liquidGlass-wrapper" href="#"><div class="liquidGlass-effect"></div><div class="liquidGlass-tint"></div><div class="liquidGlass-shine"></div><div class="liquidGlass-text">
+<div class="imgbox"><img alt="Room Scheduling" class="tileimg" loading="lazy" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='18' x='3' y='4' rx='2' ry='2'/%3E%3Cline x1='16' x2='16' y1='2' y2='6'/%3E%3Cline x1='8' x2='8' y1='2' y2='6'/%3E%3Cline x1='3' x2='21' y1='10' y2='10'/%3E%3C/svg%3E"/></div>
+<div class="label">Room Scheduling</div>
+</div></a>
+</div>
+<!-- RIGHT SIDE: New Tiles -->
+<div class="grid right">
+<!-- Your Opinion -->
+<a aria-label="Your Opinion" class="tile calendar size-2x1 liquidGlass-wrapper" href="#"><div class="liquidGlass-effect"></div><div class="liquidGlass-tint"></div><div class="liquidGlass-shine"></div><div class="liquidGlass-text">
+<div class="imgbox"><img alt="Your Opinion" class="tileimg" loading="lazy" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='8' height='4' x='8' y='2' rx='1' ry='1'/%3E%3Cpath d='M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2'/%3E%3Cpath d='m9 14 2 2 4-4'/%3E%3C/svg%3E"/></div>
+<div class="label">Your Opinion</div>
+</div></a>
+<!-- Yellow Badge -->
+<a aria-label="Yellow Badge" class="tile yellow size-2x1 liquidGlass-wrapper" href="#"><div class="liquidGlass-effect"></div><div class="liquidGlass-tint"></div><div class="liquidGlass-shine"></div><div class="liquidGlass-text">
+<div class="imgbox"><img alt="Yellow Badge" class="tileimg" loading="lazy" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='18' x='3' y='3' rx='2'/%3E%3Ccircle cx='12' cy='10' r='3'/%3E%3Cpath d='M7 21v-2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2'/%3E%3C/svg%3E"/></div>
+<div class="label">Yellow Badge</div>
+</div></a>
+<!-- Printing Paper -->
+<a aria-label="Printing Paper" class="tile links size-2x1 liquidGlass-wrapper" href="#"><div class="liquidGlass-effect"></div><div class="liquidGlass-tint"></div><div class="liquidGlass-shine"></div><div class="liquidGlass-text">
+<div class="imgbox"><img alt="Printing Paper" class="tileimg" loading="lazy" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2'/%3E%3Cpath d='M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6'/%3E%3Crect width='12' height='8' x='6' y='14' rx='1'/%3E%3C/svg%3E"/></div>
+<div class="label">Printing Paper</div>
+</div></a>
+<!-- Room Scheduling -->
+<a aria-label="Training" class="tile photos size-2x1 liquidGlass-wrapper" href="training.html"><div class="liquidGlass-effect"></div><div class="liquidGlass-tint"></div><div class="liquidGlass-shine"></div><div class="liquidGlass-text">
+<div class="imgbox"><img alt="Training" class="tileimg" loading="lazy" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='18' x='3' y='3' rx='2'/%3E%3Cpath d='M3 9h18'/%3E%3Cpath d='M3 15h18'/%3E%3Cpath d='M9 3v18'/%3E%3Cpath d='M15 3v18'/%3E%3C/svg%3E"/></div>
+<div class="label">Training</div>
+</div></a>
+</div>
+</main>
+<section aria-labelledby="wellbeing-menu-title" class="hub-view wellbeing-menu-view" hidden="" id="view-wellbeing">
+<div class="wellbeing-menu-shell">
+<h1 class="wellbeing-menu-heading" id="wellbeing-menu-title">Your Well-being</h1>
+<p class="wellbeing-menu-subtitle">Choose the support you need.</p>
+<div class="wellbeing-topic-grid">
+<a aria-label="Spiritual Care" class="tile time wellbeing-topic liquidGlass-wrapper hub-enter" href="#wellbeing-spiritual">
+<div class="liquidGlass-effect"></div>
+<div class="liquidGlass-tint"></div>
+<div class="liquidGlass-shine"></div>
+<div class="liquidGlass-text">
+<div aria-hidden="true" class="topic-icon">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24">
+<path d="M12 21s-7-4.35-7-10a4 4 0 0 1 7-2.65A4 4 0 0 1 19 11c0 5.65-7 10-7 10z"></path>
+<path d="M12 7V3"></path>
+<path d="M10 5h4"></path>
+</svg>
+</div>
+<p class="topic-title">Spiritual Care</p>
+</div>
+</a>
+<a aria-label="Employee Assistance Programme" class="tile mail wellbeing-topic liquidGlass-wrapper hub-enter" href="#wellbeing-eap">
+<div class="liquidGlass-effect"></div>
+<div class="liquidGlass-tint"></div>
+<div class="liquidGlass-shine"></div>
+<div class="liquidGlass-text">
+<div aria-hidden="true" class="topic-icon">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24">
+<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.63a2 2 0 0 1-.45 2.11L8 9.73a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.85.29 1.73.5 2.63.62A2 2 0 0 1 22 16.92z"></path>
+</svg>
+</div>
+<p class="topic-title">Employee Assistance Programme</p>
+</div>
+</a>
+<a aria-label="Benefits and Discounts" class="tile photos wellbeing-topic liquidGlass-wrapper hub-enter" href="#wellbeing-benefits">
+<div class="liquidGlass-effect"></div>
+<div class="liquidGlass-tint"></div>
+<div class="liquidGlass-shine"></div>
+<div class="liquidGlass-text">
+<div aria-hidden="true" class="topic-icon">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24">
+<path d="M12 20h9"></path>
+<path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+<path d="M15 5l3 3"></path>
+</svg>
+</div>
+<p class="topic-title">Benefits &amp; Discounts</p>
+</div>
+</a>
+</div>
+<a aria-label="Back to Essentia HUB" class="hub-back wellbeing-menu-back" href="#home">← Back</a>
+</div>
+</section>
+<section aria-labelledby="spiritual-title" class="hub-view" hidden="" id="view-wellbeing-spiritual">
+<div class="hub-page-card spiritual-card liquidGlass-wrapper">
+<div class="liquidGlass-effect"></div>
+<div class="liquidGlass-tint"></div>
+<div class="liquidGlass-shine"></div>
+<div class="liquidGlass-text">
+<div class="hub-page-content">
+<h1 class="hub-page-title" id="spiritual-title">Spiritual Care</h1>
+<div class="wellbeing-detail-grid">
+<div class="wellbeing-detail-copy">
+<p>Our multi-faith chaplaincy team provides spiritual, pastoral and religious care to patients, relatives and carers, as well as staff and visitors.</p>
+<p>The team supports people of all faiths and beliefs, including people with no particular religious belief.</p>
+<h2><span aria-hidden="true" class="detail-heading-glyph">!</span>Emergency referral</h2>
+<ul>
+<li>Call the switchboard and ask for the on-call chaplain or faith leader.</li>
+<li>A chaplain will usually attend within 1 hour.</li>
+<li>If a specific faith leader is needed, this can take up to 6 hours.</li>
+</ul>
+<h2><span aria-hidden="true" class="detail-heading-glyph">○</span>Non-emergency referral</h2>
+<p>Call the relevant chaplaincy office. A chaplain will usually attend within 24 hours.</p>
+</div>
+<aside class="wellbeing-detail-side">
+<h2><span aria-hidden="true" class="detail-heading-glyph">☎</span>Contact chaplaincy</h2>
+<div class="wellbeing-contact">
+<strong>Guy's</strong>
+<a href="tel:02071881185">020 7188 1185</a>
+<a href="tel:02071889576">020 7188 9576</a>
+</div>
+<div class="wellbeing-contact">
+<strong>St Thomas'</strong>
+<a href="tel:02071881187">020 7188 1187</a>
+<a href="tel:02071881186">020 7188 1186</a>
+<a href="tel:02071889844">020 7188 9844</a>
+</div>
+<div class="wellbeing-contact">
+<strong>Royal Brompton</strong>
+<span>020 7358 2259, ext. 82259</span>
+</div>
+<div class="wellbeing-contact">
+<strong>Harefield</strong>
+<span>01895 823 737, ext. 86533</span>
+</div>
+<div class="wellbeing-contact">
+<strong>Email</strong>
+<a href="mailto:gstt.chaplains@nhs.net">gstt.chaplains@nhs.net</a>
+</div>
+</aside>
+</div>
+</div>
+</div>
+</div>
+<a aria-label="Back to Well-being" class="hub-back" href="#wellbeing">← Back</a>
+</section>
+<section aria-labelledby="eap-title" class="hub-view" hidden="" id="view-wellbeing-eap">
+<div class="hub-page-card eap-card liquidGlass-wrapper">
+<div class="liquidGlass-effect"></div>
+<div class="liquidGlass-tint"></div>
+<div class="liquidGlass-shine"></div>
+<div class="liquidGlass-text">
+<div class="hub-page-content">
+<h1 class="hub-page-title" id="eap-title">Employee Assistance Programme</h1>
+<div class="wellbeing-detail-grid">
+<div class="wellbeing-detail-copy">
+<p>The Employee Assistance Programme provides free and confidential wellbeing support for all staff, 24 hours a day, 365 days a year.</p>
+<p>You can self-refer for support with issues affecting your wellbeing at work or at home. The Trust and your manager will not be informed if you contact the service.</p>
+<h2><span aria-hidden="true" class="detail-heading-glyph">✓</span>Support available</h2>
+<ul>
+<li>Immediate telephone support and advice.</li>
+<li>Up to 6 structured counselling sessions, online, by phone or in person.</li>
+<li>Support with stress, relationships, family, debt, money and workplace issues.</li>
+<li>Emotional, financial and work-related advice.</li>
+<li>Some language support and translation services are available on request.</li>
+</ul>
+</div>
+<aside class="wellbeing-detail-side">
+<h2><span aria-hidden="true" class="detail-heading-glyph">☎</span>Contact the EAP</h2>
+<a class="wellbeing-big-phone" href="tel:08000239324">0800 023 9324</a>
+<a class="wellbeing-big-phone" href="tel:03303802056">0330 380 2056</a>
+<p class="wellbeing-note">Available 24 hours a day, 365 days a year.</p>
+<p class="wellbeing-note">The service is confidential. Your manager and the Trust will not be told that you have used it.</p>
+</aside>
+</div>
+</div>
+</div>
+</div>
+<a aria-label="Back to Well-being" class="hub-back" href="#wellbeing">← Back</a>
+</section>
+<section aria-labelledby="benefits-title" class="hub-view" hidden="" id="view-wellbeing-benefits">
+<div class="hub-page-card vivup-card liquidGlass-wrapper">
+<div class="liquidGlass-effect"></div>
+<div class="liquidGlass-tint"></div>
+<div class="liquidGlass-shine"></div>
+<div class="liquidGlass-text">
+<div class="hub-page-content">
+<h1 class="hub-page-title" id="benefits-title">Benefits &amp; Discounts</h1>
+<div class="wellbeing-detail-grid">
+<div class="wellbeing-detail-copy">
+<p>Vivup also provides access to staff benefits and wellbeing resources alongside the Employee Assistance Programme.</p>
 
-  <div class="stage">
-    <div class="block">
-      <header>
-        <div class="brand">
-          <a href="index.html"><img src="ehib_logo.png" alt="Essentia Academy" /></a>
-        </div>
-      </header>
+<h2><span aria-hidden="true" class="detail-heading-glyph">★</span>What you can access</h2>
+<ul>
+<li>Salary sacrifice schemes.</li>
+<li>Staff discounts and benefits available through Vivup.</li>
+<li>Self-help resources, podcasts, blogs and wellbeing guides.</li>
+<li>Information about Vivup's telephone support services.</li>
+</ul>
 
-      <main class="dashboard" id="dashboard">
-        
-        <!-- LEFT SIDE: Original Tiles -->
-        <div class="grid left">
-          <!-- Time (London) -->
-          <a class="tile time size-2x2" href="#" aria-label="Current time in London">
-            <div>
-              <div class="clock" id="clock">—:—</div>
-              <div class="date" id="date">Loading…</div>
-            </div>
-            <div class="label">London</div>
-          </a>
+<p>Use the Vivup portal to explore the available services and see what benefits are currently available to you.</p>
+</div>
 
-          <!-- Weather (London) -->
-          <a class="tile weather size-4x1" href="#" aria-label="Weather in London">
-            <div class="wrow" id="wrow">
-              <div>
-                <div class="temp" id="w-temp">--°C</div>
-                <div class="cond" id="w-cond">Loading weather…</div>
-              </div>
-            </div>
-            <div class="label">Weather</div>
-          </a>
+<aside class="wellbeing-detail-side">
+<h2><span aria-hidden="true" class="detail-heading-glyph">i</span>Related support</h2>
+<p class="wellbeing-note">The Employee Assistance Programme is also available through Vivup for confidential counselling and advice.</p>
 
-          <!-- Slider tile -->
-          <a class="tile slider-tile size-4x2" href="#" aria-label="Hub Slider">
-            <div class="slider" id="hubSlider">
-              <div class="slide active"><img src="https://raw.githubusercontent.com/EsseAcadem/hub/073f232bde5dc709251fcfc26714ff301b0b2385/GDS.jpg" alt="" /></div>
-              <div class="slide"><img src="https://raw.githubusercontent.com/EsseAcadem/hub/073f232bde5dc709251fcfc26714ff301b0b2385/GUY.jpg" alt="" loading="lazy"/></div>
-              <div class="slide"><img src="https://raw.githubusercontent.com/EsseAcadem/hub/073f232bde5dc709251fcfc26714ff301b0b2385/HAR.png" alt="" loading="lazy"/></div>
-              <div class="slide"><img src="https://raw.githubusercontent.com/EsseAcadem/hub/073f232bde5dc709251fcfc26714ff301b0b2385/RBH.jpg" alt="" loading="lazy"/></div>
-              <div class="slide"><img src="https://raw.githubusercontent.com/EsseAcadem/hub/073f232bde5dc709251fcfc26714ff301b0b2385/STH.jpg" alt="" loading="lazy"/></div>
-            </div>
-          </a>
+<h2><span aria-hidden="true" class="detail-heading-glyph">?</span>Need help registering?</h2>
+<p class="wellbeing-note">The intranet includes guidance on how to register for Vivup discounts and benefits.</p>
+</aside>
+</div>
+</div>
+</div>
+</div>
 
-          <!-- Loop (Replaces the first half of the old Academy GO tile) -->
-          <a class="tile people size-1x1" href="https://web.loop.allocate-cloud.co.uk/loop" target="_blank" rel="noopener noreferrer" aria-label="Loop">
-            <div class="imgbox"><img class="tileimg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8'/%3E%3Cpath d='M3 3v5h5'/%3E%3Cpath d='M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16'/%3E%3Cpath d='M16 21v-5h5'/%3E%3C/svg%3E" alt="Loop" loading="lazy" /></div>
-            <div class="label">Loop</div>
-          </a>
+<a aria-label="Back to Well-being" class="hub-back" href="#wellbeing">← Back</a>
+</section>
+</div>
+</div>
+<script>
+    console.info(
+      'Essentia HUB performance tier:',
+      window.ESSENTIA_PERFORMANCE_TIER ||
+      document.documentElement.getAttribute('data-performance')
+    );
 
-          <!-- ESR (Replaces the second half of the old Academy GO tile) -->
-          <a class="tile yellow size-1x1" href="https://my.esr.nhs.uk/localresponse/?TAM_OP=login&USERNAME=unauthenticated&ERROR_CODE=0x00000000&METHOD=GET&URL=https%3A%2F%2Fmy.esr.nhs.uk%2Fdashboard%2Fc%2Fportal%2Flogin%3Fnav%3Dmyesr&HOSTNAME=my.esr.nhs.uk&FAILREASON=&PROTOCOL=https" target="_blank" rel="noopener noreferrer" aria-label="ESR">
-            <div class="imgbox"><img class="tileimg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='9' cy='7' r='4'/%3E%3Cpath d='M22 21v-2a4 4 0 0 0-3-3.87'/%3E%3Cpath d='M16 3.13a4 4 0 0 1 0 7.75'/%3E%3C/svg%3E" alt="ESR" loading="lazy" /></div>
-            <div class="label">ESR</div>
-          </a>
 
-          <!-- Compliance -->
-          <a class="tile calendar size-2x1" href="compliance.html" aria-label="Compliance">
-            <div class="imgbox"><img class="tileimg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/%3E%3Cpath d='m9 12 2 2 4-4'/%3E%3C/svg%3E" alt="Compliance" loading="lazy" /></div>
-            <div class="label">Compliance</div>
-          </a>
+    // Self-contained HUB internal routing
+    (function(){
+      const dashboardView = document.getElementById('dashboard');
+      const hubBlock = document.querySelector('.block');
 
-          <!-- Well-being -->
-          <a class="tile mail size-1x1" href="wellbeing.html" aria-label="Your well-being">
-            <div class="imgbox"><img class="tileimg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M8 14s1.5 2 4 2 4-2 4-2'/%3E%3Cline x1='9' y1='9' x2='9.01' y2='9'/%3E%3Cline x1='15' y1='9' x2='15.01' y2='9'/%3E%3C/svg%3E" alt="People" loading="lazy" /></div>
-            <div class="label">Your Well-being</div>
-          </a>
+      const internalViews = {
+        wellbeing: document.getElementById('view-wellbeing'),
+        'wellbeing-spiritual': document.getElementById('view-wellbeing-spiritual'),
+        'wellbeing-eap': document.getElementById('view-wellbeing-eap'),
+        'wellbeing-benefits': document.getElementById('view-wellbeing-benefits')
+      };
 
-          <!-- Essentia COH Training -->
-          <a class="tile links size-1x1" href="http://essentiaacademy.short.gy/coh" target="_blank" rel="noopener noreferrer" aria-label="Essentia COH Training">
-            <div class="imgbox"><img class="tileimg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z'/%3E%3Cpath d='M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z'/%3E%3C/svg%3E" alt="Links" loading="lazy" /></div>
-            <div class="label">Essentia COH Training</div>
-          </a>
+      function captureHomeShellSize(){
+        if (!hubBlock || !dashboardView || dashboardView.hidden) return;
 
-          <!-- Training -->
-          <a class="tile photos size-2x1" href="training.html" aria-label="Training">
-            <div class="imgbox"><img class="tileimg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='18' x='3' y='3' rx='2'/%3E%3Cpath d='M3 9h18'/%3E%3Cpath d='M3 15h18'/%3E%3Cpath d='M9 3v18'/%3E%3Cpath d='M15 3v18'/%3E%3C/svg%3E" alt="Training" loading="lazy" /></div>
-            <div class="label">Training</div>
-          </a>
-        </div>
+        hubBlock.style.removeProperty('--hub-home-width');
+        hubBlock.style.removeProperty('--hub-home-height');
+        hubBlock.style.removeProperty('--hub-home-content-height');
 
-        <!-- RIGHT SIDE: New Tiles -->
-        <div class="grid right">
-          <!-- Your Opinion -->
-          <a class="tile calendar size-2x1" href="#" aria-label="Your Opinion">
-            <div class="imgbox"><img class="tileimg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='8' height='4' x='8' y='2' rx='1' ry='1'/%3E%3Cpath d='M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2'/%3E%3Cpath d='m9 14 2 2 4-4'/%3E%3C/svg%3E" alt="Your Opinion" loading="lazy" /></div>
-            <div class="label">Your Opinion</div>
-          </a>
+        const rect = hubBlock.getBoundingClientRect();
+        const dashboardRect = dashboardView.getBoundingClientRect();
 
-          <!-- Yellow Badge -->
-          <a class="tile yellow size-2x1" href="#" aria-label="Yellow Badge">
-            <div class="imgbox"><img class="tileimg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='18' x='3' y='3' rx='2'/%3E%3Ccircle cx='12' cy='10' r='3'/%3E%3Cpath d='M7 21v-2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2'/%3E%3C/svg%3E" alt="Yellow Badge" loading="lazy" /></div>
-            <div class="label">Yellow Badge</div>
-          </a>
+        hubBlock.style.setProperty('--hub-home-width', Math.ceil(rect.width) + 'px');
+        hubBlock.style.setProperty('--hub-home-height', Math.ceil(rect.height) + 'px');
+        hubBlock.style.setProperty('--hub-home-content-height', Math.ceil(dashboardRect.height) + 'px');
+      }
 
-          <!-- Printing Paper -->
-          <a class="tile links size-2x1" href="#" aria-label="Printing Paper">
-            <div class="imgbox"><img class="tileimg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2'/%3E%3Cpath d='M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6'/%3E%3Crect width='12' height='8' x='6' y='14' rx='1'/%3E%3C/svg%3E" alt="Printing Paper" loading="lazy" /></div>
-            <div class="label">Printing Paper</div>
-          </a>
+      function restartClass(el, className){
+        if (!el) return;
+        el.classList.remove(className);
+        void el.offsetWidth;
+        el.classList.add(className);
+      }
 
-          <!-- Room Scheduling -->
-          <a class="tile time size-2x1" href="#" aria-label="Room Scheduling">
-            <div class="imgbox"><img class="tileimg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='18' x='3' y='4' rx='2' ry='2'/%3E%3Cline x1='16' x2='16' y1='2' y2='6'/%3E%3Cline x1='8' x2='8' y1='2' y2='6'/%3E%3Cline x1='3' x2='21' y1='10' y2='10'/%3E%3C/svg%3E" alt="Room Scheduling" loading="lazy" /></div>
-            <div class="label">Room Scheduling</div>
-          </a>
-        </div>
+      function prepareDashboardAnimation(){
+        if (!dashboardView) return;
 
-      </main>
-    </div>
-  </div>
+        dashboardView.querySelectorAll('.tile.liquidGlass-wrapper').forEach(function(tile){
+          tile.classList.add('hub-enter');
+        });
 
-  <script>
-    const dashboard = document.getElementById('dashboard');
-    window.addEventListener('load', ()=> dashboard.classList.add('ready'));
+        restartClass(dashboardView, 'hub-entering');
+
+        window.setTimeout(function(){
+          if (dashboardView) dashboardView.classList.remove('hub-entering');
+        }, 900);
+      }
+
+      function prepareInternalAnimation(view){
+        if (!view) return;
+
+        restartClass(view, 'hub-entering');
+
+        window.setTimeout(function(){
+          if (view) view.classList.remove('hub-entering');
+        }, 800);
+      }
+
+      function hideAllInternalViews(){
+        Object.keys(internalViews).forEach(function(key){
+          const view = internalViews[key];
+          if (view) view.hidden = true;
+        });
+      }
+
+      function routeHub(){
+        const route = (window.location.hash || '#home').slice(1).toLowerCase();
+        const targetView = internalViews[route] || null;
+
+        if (targetView) {
+          if (dashboardView) dashboardView.hidden = true;
+          hideAllInternalViews();
+          targetView.hidden = false;
+
+          const titles = {
+            wellbeing: 'Your Well-being | Essentia HUB',
+            'wellbeing-spiritual': 'Spiritual Care | Essentia HUB',
+            'wellbeing-eap': 'Employee Assistance Programme | Essentia HUB',
+            'wellbeing-benefits': 'Benefits & Discounts | Essentia HUB'
+          };
+
+          document.title = titles[route] || 'Essentia HUB';
+          prepareInternalAnimation(targetView);
+          window.scrollTo({ top: 0, behavior: 'auto' });
+        } else {
+          hideAllInternalViews();
+          if (dashboardView) dashboardView.hidden = false;
+
+          document.title = 'Essentia HUB';
+          prepareDashboardAnimation();
+          window.scrollTo({ top: 0, behavior: 'auto' });
+        }
+      }
+
+      window.addEventListener('hashchange', routeHub);
+
+      window.addEventListener('DOMContentLoaded', function(){
+        captureHomeShellSize();
+        routeHub();
+      });
+
+      window.addEventListener('resize', function(){
+        if (dashboardView && !dashboardView.hidden) {
+          captureHomeShellSize();
+        }
+      });
+
+      if (document.readyState !== 'loading') {
+        captureHomeShellSize();
+        routeHub();
+      }
+    })();
 
     // Time (London)
     function updateClock(){
@@ -426,6 +1719,8 @@
       const slides = slider.querySelectorAll('.slide');
       let i = 0;
       setInterval(() => {
+        const dashboardView = document.getElementById('dashboard');
+        if (dashboardView && dashboardView.hidden) return;
         slides[i].classList.remove('active');
         i = (i + 1) % slides.length;
         slides[i].classList.add('active');
